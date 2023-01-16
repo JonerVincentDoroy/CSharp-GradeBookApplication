@@ -58,7 +58,7 @@ namespace GradeBook.UserInterfaces
             }
             else
             {
-                Console.WriteLine($"{parts[2]} is not a supported type of gradebook," +
+                Console.WriteLine(type + " is not a supported type of gradebook," +
                     $"please try again");
                 return;
             }
