@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace GradeBook.GradeBooks
 {
@@ -20,13 +21,21 @@ namespace GradeBook.GradeBooks
             }
             else
             {
-                if (averageGrade <= 20)
+                //order the average scores from highest to lowest average
+                var orderedAverage = Students.OrderByDescending(x => x.AverageGrade)
+                    .Select(x => x.AverageGrade).ToList();
+
+                //get the last average of student in the top X percentile
+                int indexBase = (int)Math.Ceiling(0.2 * orderedAverage.Count);
+
+                //compare the average grade of student to the last top X of comparison
+                if (averageGrade >= orderedAverage[indexBase - 1])
                     return 'A';
-                else if (averageGrade >20 && averageGrade <= 40)
+                else if (averageGrade >= orderedAverage[(indexBase * 2)-1])
                     return 'B';
-                else if (averageGrade > 40 && averageGrade <= 60)
+                else if (averageGrade >= orderedAverage[(indexBase * 3) - 1])
                     return 'C';
-                else if (averageGrade > 60 && averageGrade <= 80)
+                else if (averageGrade >= orderedAverage[(indexBase * 4) - 1])
                     return 'D';
             }
 
