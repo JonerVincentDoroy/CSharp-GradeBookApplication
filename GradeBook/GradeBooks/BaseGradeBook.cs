@@ -13,14 +13,22 @@ namespace GradeBook.GradeBooks
     {
         public string Name { get; set; }
         public List<Student> Students { get; set; }
+        public GradeBookType Type { get; set; }
+        public bool IsWeighted { get; set; }
 
-        public BaseGradeBook(string name)
+        public BaseGradeBook(string name, bool weighted)
         {
             Name = name;
             Students = new List<Student>();
+            IsWeighted = weighted;
         }
 
-        public GradeBookType Type { get; set; }
+        protected BaseGradeBook(string name)
+        {
+            Name = name;
+        }
+
+        
 
         public void AddStudent(Student student)
         {
@@ -106,22 +114,35 @@ namespace GradeBook.GradeBooks
             }
         }
 
-        public virtual double GetGPA(char letterGrade, StudentType studentType)
+        public virtual int GetGPA(char letterGrade, StudentType studentType, bool isWeighted)
         {
+            int gpa_equivalent = 0;
+           
+            if ((IsWeighted && studentType == StudentType.Honors) || studentType == StudentType.DualEnrolled)
+            {
+                gpa_equivalent += 1;
+            }
+
             switch (letterGrade)
             {
                 case 'A':
-                    return 4;
+                    gpa_equivalent += 4;
+                    break;
                 case 'B':
-                    return 3;
+                    gpa_equivalent += 3;
+                    break;
                 case 'C':
-                    return 2;
+                    gpa_equivalent += 2;
+                    break;
                 case 'D':
-                    return 1;
+                    gpa_equivalent += 1;
+                    break;
                 case 'F':
-                    return 0;
+                    gpa_equivalent = 0;
+                    break;
             }
-            return 0;
+
+            return gpa_equivalent;
         }
 
         public virtual void CalculateStatistics()
@@ -138,7 +159,7 @@ namespace GradeBook.GradeBooks
             foreach (var student in Students)
             {
                 student.LetterGrade = GetLetterGrade(student.AverageGrade);
-                student.GPA = GetGPA(student.LetterGrade, student.Type);
+                student.GPA = GetGPA(student.LetterGrade, student.Type,IsWeighted);
 
                 Console.WriteLine("{0} ({1}:{2}) GPA: {3}.", student.Name, student.LetterGrade, student.AverageGrade, student.GPA);
                 allStudentsPoints += student.AverageGrade;
@@ -195,7 +216,7 @@ namespace GradeBook.GradeBooks
         {
             var student = Students.FirstOrDefault(e => e.Name == name);
             student.LetterGrade = GetLetterGrade(student.AverageGrade);
-            student.GPA = GetGPA(student.LetterGrade, student.Type);
+            student.GPA = GetGPA(student.LetterGrade, student.Type,IsWeighted);
 
             Console.WriteLine("{0} ({1}:{2}) GPA: {3}.", student.Name, student.LetterGrade, student.AverageGrade, student.GPA);
             Console.WriteLine();
