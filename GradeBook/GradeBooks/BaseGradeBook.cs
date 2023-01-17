@@ -114,32 +114,29 @@ namespace GradeBook.GradeBooks
             }
         }
 
-        public virtual int GetGPA(char letterGrade, StudentType studentType, bool isWeighted)
+        public virtual int GetGPA(char letterGrade, StudentType studentType)
         {
             int gpa_equivalent = 0;
            
-            if ((IsWeighted && studentType == StudentType.Honors) || studentType == StudentType.DualEnrolled)
-            {
-                gpa_equivalent += 1;
-            }
-
             switch (letterGrade)
             {
                 case 'A':
-                    gpa_equivalent += 4;
+                    gpa_equivalent = 4;
                     break;
                 case 'B':
-                    gpa_equivalent += 3;
+                    gpa_equivalent = 3;
                     break;
                 case 'C':
-                    gpa_equivalent += 2;
+                    gpa_equivalent = 2;
                     break;
                 case 'D':
-                    gpa_equivalent += 1;
+                    gpa_equivalent = 1;
                     break;
-                case 'F':
-                    gpa_equivalent = 0;
-                    break;
+            }
+
+            if (IsWeighted && (studentType == StudentType.Honors || studentType == StudentType.DualEnrolled))
+            {
+                gpa_equivalent++;
             }
 
             return gpa_equivalent;
@@ -159,7 +156,7 @@ namespace GradeBook.GradeBooks
             foreach (var student in Students)
             {
                 student.LetterGrade = GetLetterGrade(student.AverageGrade);
-                student.GPA = GetGPA(student.LetterGrade, student.Type,IsWeighted);
+                student.GPA = GetGPA(student.LetterGrade, student.Type);
 
                 Console.WriteLine("{0} ({1}:{2}) GPA: {3}.", student.Name, student.LetterGrade, student.AverageGrade, student.GPA);
                 allStudentsPoints += student.AverageGrade;
@@ -216,7 +213,7 @@ namespace GradeBook.GradeBooks
         {
             var student = Students.FirstOrDefault(e => e.Name == name);
             student.LetterGrade = GetLetterGrade(student.AverageGrade);
-            student.GPA = GetGPA(student.LetterGrade, student.Type,IsWeighted);
+            student.GPA = GetGPA(student.LetterGrade, student.Type);
 
             Console.WriteLine("{0} ({1}:{2}) GPA: {3}.", student.Name, student.LetterGrade, student.AverageGrade, student.GPA);
             Console.WriteLine();
